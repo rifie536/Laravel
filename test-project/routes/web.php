@@ -7,10 +7,10 @@ use App\Http\Controllers\PostController;
 
 Route::get('/', function () {
     return view('welcome');
-})->middleware('auth');
+});
 
 Route::get('/test', [TestController::class, 'test'])->name('test');
-Route::get('post/create', [PostController::class, 'create'])->middleware(['auth', 'admin']);
+Route::get('post/create', [PostController::class, 'create']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
