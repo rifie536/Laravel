@@ -11,6 +11,9 @@ Route::get('/', function () {
 
 Route::get('/test', [TestController::class, 'test'])->name('test');
 Route::get('post/create', [PostController::class, 'create']);
+Route::get('post/show/{post}', [PostController::class, 'show'])->name('post.show');
+Route::get('post/{post}/edit', [PostController::class, 'edit'])->name('post.edit');
+Route::patch('post/{post}', [PostController::class, 'update'])->name('post.update');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
