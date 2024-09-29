@@ -2,22 +2,17 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TestController;
 use App\Http\Controllers\PostController;
+
+Route::resource('post', PostController::class);
 
 Route::get('/', function () {
     return view('welcome');
-})->middleware('auth');
-
-Route::get('/test', [TestController::class, 'test'])->name('test');
-Route::get('post/create', [PostController::class, 'create'])->middleware(['auth', 'admin']);
+});
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::post('post', [PostController::class, 'store'])->name('post.store');
-Route::get('post', [PostController::class, 'index']);
+})->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
