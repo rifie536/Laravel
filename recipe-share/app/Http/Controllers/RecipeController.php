@@ -3,9 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Recipe;
 
 class RecipeController extends Controller
 {
+    public function home()
+    {
+        $recipes = Recipe::select('recipes.id', 'recipes.title', 'recipes.description', 'recipes.created_at', 'recipes.image', 'users.name')
+            ->join('users', 'users.id', '=', 'recipes.user_id')
+            ->orderBy('recipes.created_at', 'desc')
+            ->limit(3)
+            ->get();
+        // dd($recipes);
+        $popular = Recipe::select('recipes.id', 'recipes.title', 'recipes.description', 'recipes.created_at', 'recipes.image', 'recipes.views', 'users.name')
+            ->join('users', 'users.id', '=', 'recipes.user_id')
+            ->orderBy('recipes.views', 'desc')
+            ->limit(2)
+            ->get();
+        // dd($popular);
+        return view('home', compact('recipes', 'popular'));
+    }
     /**
      * Display a listing of the resource.
      */
