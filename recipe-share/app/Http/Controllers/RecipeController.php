@@ -28,7 +28,12 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $recipes = Recipe::select('recipes.id', 'recipes.title', 'recipes.description', 'recipes.created_at', 'recipes.image', 'users.name')
+            ->join('users', 'users.id', '=', 'recipes.user_id')
+            ->orderBy('recipes.created_at', 'desc')
+            ->limit(3)
+            ->get();
+        return view('recipes.index', compact('recipes'));
     }
 
     /**
