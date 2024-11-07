@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Recipe;
+use App\Models\Category;
 
 class RecipeController extends Controller
 {
@@ -26,14 +27,30 @@ class RecipeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $recipes = Recipe::select('recipes.id', 'recipes.title', 'recipes.description', 'recipes.created_at', 'recipes.image', 'users.name')
+        $filters = $request->all();
+        $query = Recipe::select('recipes.id', 'recipes.title', 'recipes.description', 'recipes.created_at', 'recipes.image', 'users.name', \DB::raw('AVG(reviews.rating) as rating'))
             ->join('users', 'users.id', '=', 'recipes.user_id')
-            ->orderBy('recipes.created_at', 'desc')
-            ->limit(3)
-            ->get();
-        return view('recipes.index', compact('recipes'));
+            ->leftJoin('reviews', 'reviews.recipe_id', '=', 'recipes.id')
+            ->groupBy('recipes.id')
+            ->orderBy('recipes.created_at', 'desc');
+
+        if( !empty($filters) ) {
+            if( !empty($filters['categories']) ) {
+                $query->whereIn('recipes.category_id', $filters['categories']);
+            }
+
+            if( !empty($filters['title']) ) {
+                $query->where('recipes.title', 'like', '%'.$filters['title'].'%');
+            }
+        }
+
+        $recipes = $query->paginate(5);
+
+        $categories = Category::all();
+
+        return view('recipes.index', compact('recipes', 'categories', 'filters'));
     }
 
     /**
